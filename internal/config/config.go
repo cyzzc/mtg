@@ -39,6 +39,7 @@ type Config struct {
 	PublicIPv6                  TypeIP          `json:"publicIpv6"`
 	DomainFronting              struct {
 		IP            TypeIP   `json:"ip"`
+		Host          TypeHost `json:"host"`
 		Port          TypePort `json:"port"`
 		ProxyProtocol TypeBool `json:"proxyProtocol"`
 	} `json:"domainFronting"`
@@ -118,6 +119,9 @@ func (c *Config) GetDomainFrontingPort(defaultValue uint) uint {
 }
 
 func (c *Config) GetDomainFrontingIP(defaultValue net.IP) string {
+	if host := c.DomainFronting.Host.Get(""); host != "" {
+		return host
+	}
 	if ip := c.DomainFronting.IP.Get(nil); ip != nil {
 		return ip.String()
 	}
@@ -138,6 +142,10 @@ func (c *Config) Validate() error {
 
 	if c.BindTo.Get("") == "" {
 		return fmt.Errorf("incorrect bind-to parameter %s", c.BindTo.String())
+	}
+
+	if c.DomainFronting.Host.Get("") != "" && c.DomainFronting.IP.Get(nil) != nil {
+		return fmt.Errorf("[domain-fronting] host and ip are mutually exclusive; pick one")
 	}
 
 	return nil

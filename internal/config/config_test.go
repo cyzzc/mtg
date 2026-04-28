@@ -74,6 +74,17 @@ func (suite *ConfigTestSuite) TestString() {
 	suite.NotEmpty(conf.String())
 }
 
+func (suite *ConfigTestSuite) TestDomainFrontingHostOrIP() {
+	conf, err := config.Parse(suite.ReadConfig("minimal.toml"))
+	suite.NoError(err)
+
+	suite.NoError(conf.DomainFronting.Host.Set("fronting-backend"))
+	suite.NoError(conf.DomainFronting.IP.Set("10.0.0.10"))
+	suite.Error(conf.Validate())
+
+	suite.Equal("fronting-backend", conf.GetDomainFrontingIP(nil))
+}
+
 func TestConfig(t *testing.T) {
 	t.Parallel()
 	suite.Run(t, &ConfigTestSuite{})

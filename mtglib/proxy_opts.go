@@ -105,11 +105,14 @@ type ProxyOpts struct {
 	// This is an optional setting.
 	DomainFrontingPort uint
 
-	// DomainFrontingIP is an IP address to use when connecting to the fronting
-	// domain instead of resolving the hostname from the secret via DNS.
+	// DomainFrontingIP is the address to use when connecting to the fronting
+	// domain instead of resolving the hostname from the secret via DNS. It
+	// can be a literal IP or a hostname; hostnames are resolved at dial time
+	// via the native dialer (which honours dual-stack and Happy Eyeballs).
 	//
-	// This is useful when DNS resolution of the fronting host is blocked.
-	// The hostname from the secret is still used for SNI in the TLS handshake.
+	// This is useful when DNS resolution of the secret's hostname is blocked
+	// or loops back to this server. The hostname from the secret is still
+	// used for SNI in the TLS handshake.
 	//
 	// This is an optional setting.
 	DomainFrontingIP string
