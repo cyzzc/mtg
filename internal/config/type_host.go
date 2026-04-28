@@ -28,6 +28,9 @@ func (t *TypeHost) Set(value string) error {
 		return fmt.Errorf("incorrect host %q", value)
 	}
 
+	// At this point value is not a parsed IP (IPv6 literals returned
+	// above), so any remaining colon indicates a host:port form, which
+	// belongs in a separate field.
 	if strings.Contains(value, ":") {
 		return fmt.Errorf("host must not contain a port: %q", value)
 	}
