@@ -225,11 +225,14 @@ func (d *Doctor) checkNetwork(ntw mtglib.Network) bool {
 
 	var wg sync.WaitGroup
 	for i, dc := range dcs {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
+			defer func() {
+				if r := recover(); r != nil {
+					errs[i] = fmt.Errorf("panic: %v", r)
+				}
+			}()
 			errs[i] = d.checkNetworkAddresses(ntw, essentials.TelegramCoreAddresses[dc])
-		}()
+		})
 	}
 	wg.Wait()
 
