@@ -344,6 +344,10 @@ func NewProxy(opts ProxyOpts) (*Proxy, error) {
 	logger := opts.getLogger("proxy")
 	updatersLogger := logger.Named("telegram-updaters")
 
+	if opts.DomainFrontingIP != "" {
+		logger.Warning("mtglib.ProxyOpts.DomainFrontingIP is deprecated and ignored; use DomainFrontingHost instead")
+	}
+
 	proxy := &Proxy{
 		ctx:                      ctx,
 		ctxCancel:                cancel,
@@ -355,7 +359,7 @@ func NewProxy(opts ProxyOpts) (*Proxy, error) {
 		eventStream:              opts.EventStream,
 		logger:                   logger,
 		domainFrontingPort:       opts.getDomainFrontingPort(),
-		domainFrontingHost:       opts.DomainFrontingIP,
+		domainFrontingHost:       opts.DomainFrontingHost,
 		tolerateTimeSkewness:     opts.getTolerateTimeSkewness(),
 		idleTimeout:              opts.getIdleTimeout(),
 		handshakeTimeout:         opts.getHandshakeTimeout(),

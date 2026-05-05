@@ -140,7 +140,18 @@ func (d *Doctor) checkDeprecatedConfig() bool {
 			"when":        "2.3.0",
 			"old":         "domain-fronting-ip",
 			"old_section": "",
-			"new":         "ip",
+			"new":         "host",
+			"new_section": "domain-fronting",
+		})
+	}
+
+	if d.conf.DomainFronting.IP.Value != nil {
+		ok = false
+		tplWDeprecatedConfig.Execute(os.Stdout, map[string]string{ //nolint: errcheck
+			"when":        "2.4.0",
+			"old":         "ip",
+			"old_section": "domain-fronting",
+			"new":         "host",
 			"new_section": "domain-fronting",
 		})
 	}

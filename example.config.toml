@@ -118,13 +118,16 @@ allow-fallback-on-unknown-dc = false
 #
 # Use `host` — accepts a hostname or a literal IP. Hostnames are resolved
 # at dial time, so a dual-stack DNS record can reach the right backend
-# address family for IPv4 or IPv6 clients. `ip` is kept for backward
-# compatibility (literal IP only). Setting both is an error.
+# address family for IPv4 or IPv6 clients.
 #
 # The hostname from the secret is still used for SNI in the TLS handshake.
 #
 # default value is not set (the secret's hostname is used).
 # host = "fronting-backend"
+
+# Deprecated: use `host`. If `ip` is set, mtg logs a warning at startup
+# and ignores the value (domain-fronting falls back to the secret's
+# hostname unless `host` is also set).
 # ip = "10.10.10.11"
 
 # FakeTLS uses domain fronting protection. So it needs to know a port to

@@ -118,16 +118,7 @@ func (c *Config) GetDomainFrontingPort(defaultValue uint) uint {
 }
 
 func (c *Config) GetDomainFrontingHost() string {
-	if host := c.DomainFronting.Host.Get(""); host != "" {
-		return host
-	}
-	if ip := c.DomainFronting.IP.Get(nil); ip != nil {
-		return ip.String()
-	}
-	if ip := c.DomainFrontingIP.Get(nil); ip != nil {
-		return ip.String()
-	}
-	return ""
+	return c.DomainFronting.Host.Get("")
 }
 
 func (c *Config) GetDomainFrontingProxyProtocol(defaultValue bool) bool {
@@ -141,10 +132,6 @@ func (c *Config) Validate() error {
 
 	if c.BindTo.Get("") == "" {
 		return fmt.Errorf("incorrect bind-to parameter %s", c.BindTo.String())
-	}
-
-	if c.DomainFronting.Host.Get("") != "" && c.DomainFronting.IP.Get(nil) != nil {
-		return fmt.Errorf("[domain-fronting] host and ip are mutually exclusive; pick one")
 	}
 
 	return nil
