@@ -287,10 +287,22 @@ func warnSNIMismatch(conf *config.Config, ntw mtglib.Network, log mtglib.Logger)
 		"DPI may detect and block the proxy. See 'mtg doctor' for details")
 }
 
+func warnDeprecatedDomainFronting(conf *config.Config, log mtglib.Logger) {
+	if conf.DomainFrontingIP.Value != nil {
+		log.Warning(`config option "domain-fronting-ip" is deprecated and ignored; use "host" in [domain-fronting] instead`)
+	}
+
+	if conf.DomainFronting.IP.Value != nil {
+		log.Warning(`config option "ip" in [domain-fronting] is deprecated and ignored; use "host" instead`)
+	}
+}
+
 func runProxy(conf *config.Config, version string) error { //nolint: funlen, cyclop
 	logger := makeLogger(conf)
 
 	logger.BindJSON("configuration", conf.String()).Debug("configuration")
+
+	warnDeprecatedDomainFronting(conf, logger)
 
 	eventStream, err := makeEventStream(conf, logger)
 	if err != nil {
@@ -343,7 +355,7 @@ func runProxy(conf *config.Config, version string) error { //nolint: funlen, cyc
 		Secret:                      conf.Secret,
 		Concurrency:                 conf.GetConcurrency(mtglib.DefaultConcurrency),
 		DomainFrontingPort:          conf.GetDomainFrontingPort(mtglib.DefaultDomainFrontingPort),
-		DomainFrontingIP:            conf.GetDomainFrontingIP(nil),
+		DomainFrontingHost:          conf.GetDomainFrontingHost(),
 		DomainFrontingProxyProtocol: conf.GetDomainFrontingProxyProtocol(false),
 		PreferIP:                    conf.PreferIP.Get(mtglib.DefaultPreferIP),
 		AutoUpdate:                  conf.AutoUpdate.Get(false),

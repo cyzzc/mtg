@@ -24,6 +24,7 @@ type tomlConfig struct {
 	PublicIPv4                  string `toml:"public-ipv4" json:"publicIpv4,omitempty"`
 	PublicIPv6                  string `toml:"public-ipv6" json:"publicIpv6,omitempty"`
 	DomainFronting              struct {
+		Host          string `toml:"host" json:"host,omitempty"`
 		IP            string `toml:"ip" json:"ip,omitempty"`
 		Port          uint   `toml:"port" json:"port,omitempty"`
 		ProxyProtocol bool   `toml:"proxy-protocol" json:"proxyProtocol,omitempty"`

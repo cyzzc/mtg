@@ -146,7 +146,18 @@ func (d *Doctor) checkDeprecatedConfig() bool {
 			"when":        "2.3.0",
 			"old":         "domain-fronting-ip",
 			"old_section": "",
-			"new":         "ip",
+			"new":         "host",
+			"new_section": "domain-fronting",
+		})
+	}
+
+	if d.conf.DomainFronting.IP.Value != nil {
+		ok = false
+		tplWDeprecatedConfig.Execute(os.Stdout, map[string]string{ //nolint: errcheck
+			"when":        "2.4.0",
+			"old":         "ip",
+			"old_section": "domain-fronting",
+			"new":         "host",
 			"new_section": "domain-fronting",
 		})
 	}
@@ -318,8 +329,8 @@ func (d *Doctor) checkNetworkAddresses(ntw mtglib.Network, addresses []string) e
 
 func (d *Doctor) checkFrontingDomain(ntw mtglib.Network) bool {
 	host := d.conf.Secret.Host
-	if ip := d.conf.GetDomainFrontingIP(nil); ip != "" {
-		host = ip
+	if override := d.conf.GetDomainFrontingHost(); override != "" {
+		host = override
 	}
 
 	port := d.conf.GetDomainFrontingPort(mtglib.DefaultDomainFrontingPort)

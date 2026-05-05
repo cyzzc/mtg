@@ -112,11 +112,22 @@ allow-fallback-on-unknown-dc = false
 # required.
 [domain-fronting]
 # By default, mtg resolves the fronting hostname (from the secret) via DNS
-# to establish a TCP connection. If DNS resolution of that hostname is blocked,
-# you can specify an IP address to connect to directly. The hostname is still
-# used for SNI in the TLS handshake.
+# to establish a TCP connection. If that resolution is blocked, or loops
+# back to this server (e.g. mtg sits behind an SNI router whose DNS points
+# at itself), override the destination here.
 #
-# default value is not set (DNS resolution is used).
+# Use `host` — accepts a hostname or a literal IP. Hostnames are resolved
+# at dial time, so a dual-stack DNS record can reach the right backend
+# address family for IPv4 or IPv6 clients.
+#
+# The hostname from the secret is still used for SNI in the TLS handshake.
+#
+# default value is not set (the secret's hostname is used).
+# host = "fronting-backend"
+
+# Deprecated: use `host`. If `ip` is set, mtg logs a warning at startup
+# and ignores the value (domain-fronting falls back to the secret's
+# hostname unless `host` is also set).
 # ip = "10.10.10.11"
 
 # FakeTLS uses domain fronting protection. So it needs to know a port to
